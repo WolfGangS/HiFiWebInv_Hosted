@@ -85,8 +85,8 @@ function openWebOverlay(){
 
 var rezUpInterval = null;
 var rezUpID = null;
-function rezURLUp(url,pos,local){
-    rezUpID = rezURL(url,pos,local);
+function rezURLUp(url,pos,phantom,local){
+    rezUpID = rezURL(url,pos,phantom,local);
     var props = Entities.getEntityProperties(rezUpID);
     if(rezUpInterval !== null){
         Script.clearInterval(rezUpInterval);
@@ -105,8 +105,10 @@ function rezURLUp(url,pos,local){
     },10);
 }
 
-function rezURL(url,pos,local){
-    return Entities.addEntity({type: "Model",modelURL:url,position:pos},local);
+function rezURL(url,pos,phantom,local){
+    phys = "static-mesh";
+    if(phantom === true)phys = "none";
+    return Entities.addEntity({type: "Model",modelURL:url,shapeType:phys,position:pos},local);
 }
 
 function setupWebEvents(){
@@ -140,7 +142,7 @@ function mouseUp(event){
         var hit = mouseRay(event);
         if(hit !== false){
             if(mouseUpObjectType == "fbx"){
-                rezURLUp(mouseUpObject,hit.intersection,false);
+                rezURLUp(mouseUpObject,hit.intersection,event.isControl,false);
             }
             else if(mouseUpObjectType == "png"){
                 applyTexture(hit.entityID,mouseUpObject);
